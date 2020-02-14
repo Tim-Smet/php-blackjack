@@ -11,10 +11,8 @@ class Blackjack {
         return [$card1, $card2];
     }
     //hit function will add a randomly generated card between 1-11
-    public function hit($currentScore){
-        $randomCard = mt_rand(1, 11);
-        $this->score = $randomCard + $currentScore;
-        return $randomCard;
+    public function hit(){
+        return mt_rand(1, 11);
     }
 
     //End player turn and start dealer's turn

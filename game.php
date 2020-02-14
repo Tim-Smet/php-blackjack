@@ -50,29 +50,46 @@
 
         //If player presses stands
         if (isset($_POST['stand'])){
+            $player->stand();
+            echo 'Dealer has ' . $_SESSION['dealerScore'] . '<br>';
             //if player presses stand check if dealer has less then 15.
             while ($_SESSION['dealerScore'] <= 15){
                 $hitDealer = $dealer->hit($dealer->score);
-                echo 'The dealer hit ' . $hitDealer . '<br>';
                 $_SESSION['dealerScore'] += $hitDealer;
+                echo 'The dealer hit ' . $hitDealer . ' And has now ' . $_SESSION['dealerScore'] . '<br>';
+
             }
 
             //Check if dealer wins
             if ($_SESSION['dealerScore'] < 22 && $_SESSION['dealerScore'] >= $_SESSION['playerScore']){
                 echo 'Dealer wins! you lost';
             }
+
+            //Check if dealer lost
+            if ($_SESSION['dealerScore'] > 21){
+                echo 'Dealer lost';
+            }
+
+            //In the case that dealer has more then 15 but still less then 21 and less then player.
+            if ($_SESSION['dealerScore'] > 15 && $_SESSION['dealerScore'] < 21 && $_SESSION['dealerScore'] < $_SESSION['playerScore']){
+                $hitDealer = $dealer->hit($_SESSION['dealerScore']);
+                $_SESSION['dealerScore'] += $hitDealer;
+                echo 'Dealer hit ' . $hitDealer . ' and has now ' . $_SESSION['dealerScore'] . '<br>';
+                if ($_SESSION['dealerScore'] > 21){
+                    echo 'The dealer lost';
+                }
+            }
         }
 
         //If player surrenders
         if (isset($_POST['surrender'])){
-            echo 'You lost!';
+            $player->surrender();
         }
     }
 
     ?>
     <div class='container'>
         <p>Player score is: <?php echo $_SESSION['playerScore']?></p>
-        <p>Dealer score is: <?php echo $_SESSION['dealerScore']?></p>
     </div>
 
     <form method="POST">

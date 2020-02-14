@@ -19,7 +19,7 @@ class Blackjack {
 
     //End player turn and start dealer's turn
     public function stand(){
-        echo 'It is the dealers turn. Your score is ' . $_SESSION['score'];
+        echo 'It is the dealers turn <br>';
      }
 
      //Give up (Dealer wins)

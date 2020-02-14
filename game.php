@@ -19,29 +19,76 @@
 
     //Initiate class in player variable
     $player = new Blackjack();
-    $_SESSION['player'] = $player;
-
-    //Trying to call hit function twice and display the outcome.
-    $firstCard = $player->hit();
-    $secondCard = $player->hit();
-
-
-    $startingHand = $firstCard + $secondCard;
-
-    echo $startingHand;
-
     //Initiate class in dealer variable
     $dealer = new Blackjack();
-    $_SESSION['dealer'] = $dealer;
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+        //if button on home page is pushed
+        if (isset($_POST['start'])){
+            //Players first two cards
+            $firstHand = $player->firstHand();
+            echo '<p>You have ' . $firstHand[0] . ' and a ' . $firstHand[1] . '</p>';
+            $_SESSION['playerScore'] = $player->score;
+            echo $_SESSION['playerScore'];
+            //Dealers first two cards
+            $dealerFirstHand = $dealer->firstHand();
+            $_SESSION['dealerScore'] = $dealer->score;
+        }
+
+        //If player presses hit button
+        if (isset($_POST['hit'])){
+            //In hit we create random card, add this with current score which is score. We return the generated card.
+            $hitPlayer = $player->hit($_SESSION['playerScore']);
+            echo 'Your card is ' . $hitPlayer . '<br>';
+
+            //Check if player has more then 21
+            if ($player->score > 21){
+                echo 'You lose!';
+            }
+            $_SESSION['playerScore'] += $hitPlayer;
+        }
+
+        //If player presses stands
+        if (isset($_POST['stand'])){
+            while ($dealer->score <= 15){
+                $hitDealer = $dealer->hit($dealer->score);
+                echo 'The dealer hit ' . $hitDealer . '<br>';
+                $_SESSION['dealerScore'] += $hitDealer;
+            }
+
+            //Check if dealer is over 21
+            if ($_SESSION['dealerScore'] > 21){
+                echo 'Dealer lost, You win!';
+            }
+
+            //Compare the scores
+            if ($_SESSION['playerScore'] <= $_SESSION['dealerScore']){
+                echo 'Dealer wins!';
+            } else {
+                echo 'You win!';
+            }
+        }
+
+        //If player surrenders
+        if (isset($_POST['surrender'])){
+            echo 'You lost!';
+        }
+    }
 
     ?>
+    <div class='container'>
+        <p>Player score is: <?php echo $_SESSION['playerScore']?></p>
+    </div>
 
-    <form method="post">
-        <button name="start" type="submit" class="btn btn-primary">HIT</button>
-        <button name="start" type="submit" class="btn btn-primary">STAND</button>
-        <button name="start" type="submit" class="btn btn-primary">SURENDER</button>
+    <form method="POST">
+        <button name="hit" type="submit" class="btn btn-primary">HIT</button>
+        <button name="stand" type="submit" class="btn btn-primary">STAND</button>
+        <button name="surrender" type="submit" class="btn btn-primary">SURENDER</button>
     </form>
 
+    <form method="post" action="index.php">
+        <button name="home" type="submit" class="btn btn-primary">HOME</button>
+    </form>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

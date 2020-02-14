@@ -14,7 +14,6 @@ class Blackjack {
     public function hit($currentScore){
         $randomCard = mt_rand(1, 11);
         $this->score = $randomCard + $currentScore;
-        $this->score = $_SESSION['score'];
         return $randomCard;
     }
 
@@ -26,8 +25,6 @@ class Blackjack {
      //Give up (Dealer wins)
      public function surrender(){
         echo 'You gave up, LOSER! Dealer has won!';
-        unset($_SESSION['player']);
-
      }
 }
 

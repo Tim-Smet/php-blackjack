@@ -38,34 +38,28 @@
         //If player presses hit button
         if (isset($_POST['hit'])){
             //In hit we create random card, add this with current score which is score. We return the generated card.
-            $hitPlayer = $player->hit($_SESSION['playerScore']);
+            $hitPlayer = $player->hit($player->score);
             echo 'Your card is ' . $hitPlayer . '<br>';
-
+            $_SESSION['playerScore'] += $hitPlayer;
             //Check if player has more then 21
-            if ($player->score > 21){
+            if ($_SESSION['playerScore'] > 21){
                 echo 'You lose!';
             }
-            $_SESSION['playerScore'] += $hitPlayer;
+
         }
 
         //If player presses stands
         if (isset($_POST['stand'])){
-            while ($dealer->score <= 15){
+            //if player presses stand check if dealer has less then 15.
+            while ($_SESSION['dealerScore'] <= 15){
                 $hitDealer = $dealer->hit($dealer->score);
                 echo 'The dealer hit ' . $hitDealer . '<br>';
                 $_SESSION['dealerScore'] += $hitDealer;
             }
 
-            //Check if dealer is over 21
-            if ($_SESSION['dealerScore'] > 21){
-                echo 'Dealer lost, You win!';
-            }
-
-            //Compare the scores
-            if ($_SESSION['playerScore'] <= $_SESSION['dealerScore']){
-                echo 'Dealer wins!';
-            } else {
-                echo 'You win!';
+            //Check if dealer wins
+            if ($_SESSION['dealerScore'] < 22 && $_SESSION['dealerScore'] >= $_SESSION['playerScore']){
+                echo 'Dealer wins! you lost';
             }
         }
 
@@ -78,12 +72,13 @@
     ?>
     <div class='container'>
         <p>Player score is: <?php echo $_SESSION['playerScore']?></p>
+        <p>Dealer score is: <?php echo $_SESSION['dealerScore']?></p>
     </div>
 
     <form method="POST">
         <button name="hit" type="submit" class="btn btn-primary">HIT</button>
         <button name="stand" type="submit" class="btn btn-primary">STAND</button>
-        <button name="surrender" type="submit" class="btn btn-primary">SURENDER</button>
+        <button name="surrender" type="submit" class="btn btn-primary">SURRENDER</button>
     </form>
 
     <form method="post" action="index.php">
